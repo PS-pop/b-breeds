@@ -1,7 +1,8 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { SearchBox } from './searchbox'
-import {useSearchParams} from 'next/navigation'
+import React, { useEffect, useState, Suspense } from 'react';
+import { SearchBox } from './searchbox';
+import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 
 const genera = [
   {
@@ -79,7 +80,7 @@ interface BirdProfile {
   imageAlt: string,
 }
 
-export default function Genera({isAdmin}: {isAdmin: boolean}) {
+export default function Genera({ isAdmin }: { isAdmin: boolean }) {
   
   const [breedData, setBreed] = useState<BirdProfile[]>([])
 
@@ -135,42 +136,44 @@ export default function Genera({isAdmin}: {isAdmin: boolean}) {
   const totalBreed = breedData.length;
 
   return (
-    <div >
-      {
-        isAdmin ? (
-          <div className='flex justify-center'>Admin Mode</div>
-        ) : (<></>)
-      }
-      <div className="bg-white">
-        <div className="mx-auto max-w-2xl px-4 pt-4 sm:px-6 sm:pt-6 lg:max-w-7xl lg:px-8">
-          <SearchBox defaultValue={searchQuery} />
-        </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div>
+        {
+          isAdmin ? (
+            <div className='flex justify-center'>Admin Mode</div>
+          ) : (<></>)
+        }
+        <div className="bg-white">
+          <div className="mx-auto max-w-2xl px-4 pt-4 sm:px-6 sm:pt-6 lg:max-w-7xl lg:px-8">
+            <SearchBox defaultValue={searchQuery} />
+          </div>
 
-        <div className='flex justify-center px-8 pt-8'>
-          <button className='w-full flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-500 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm'>Create item</button>
-        </div>
+          <div className='flex justify-center px-8 pt-8'>
+            <button className='w-full flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-500 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm'>Create item</button>
+          </div>
 
-        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-          <h2 className="sr-only">Products</h2>
+          <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+            <h2 className="sr-only">Products</h2>
 
-          {totalBreed === 0 ? <p>No result returned</p> : (
-            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-              {breedData.map((genus) => (
-                <a key={genus.id} href={genus.href} className="group">
-                  <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-                    <img
-                      src={genus.imageSrc}
-                      alt={genus.imageAlt}
-                      className="h-full w-full object-cover object-center group-hover:opacity-75" />
-                  </div>
-                  <h3 className="mt-4 text-sm text-gray-700">{genus.name}</h3>
-                  <p className="mt-1 text-lg font-medium text-gray-900">{genus.price}</p>
-                </a>
-              ))}
-            </div>
-          )}
+            {totalBreed === 0 ? <p>No result returned</p> : (
+              <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+                {breedData.map((genus) => (
+                  <a key={genus.id} href={genus.href} className="group">
+                    <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
+                      <Image
+                        src={genus.imageSrc}
+                        alt={genus.imageAlt}
+                        className="h-full w-full object-cover object-center group-hover:opacity-75" />
+                    </div>
+                    <h3 className="mt-4 text-sm text-gray-700">{genus.name}</h3>
+                    <p className="mt-1 text-lg font-medium text-gray-900">{genus.price}</p>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </Suspense>
   )
 }
